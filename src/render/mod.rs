@@ -67,7 +67,7 @@ pub enum PointCloudExtractionSystems {
 
 impl Plugin for RenderPointCloudPlugin {
     fn build(&self, app: &mut bevy::app::App) {
-        embedded_asset!(app, "pointcloud.wgsl");
+        embedded_asset!(app, "pointcloud.wesl");
 
         app.add_plugins(MaterialsPlugin::default()) // TODO add debug flags opt
             .add_plugins(ExtractComponentPlugin::<PointCloud3d>::default())

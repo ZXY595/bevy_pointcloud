@@ -52,7 +52,7 @@ pub fn init_point_cloud_pipeline(
     mesh_pipeline: Res<MeshPipeline>,
 ) {
     commands.insert_resource(PointCloudPipeline {
-        shader: load_embedded_asset!(asset_server.as_ref(), "pointcloud.wgsl"),
+        shader: load_embedded_asset!(asset_server.as_ref(), "pointcloud.wesl"),
         mesh_pipeline: mesh_pipeline.clone(),
         empty_layout: BindGroupLayoutDescriptor::new("pointcloud_empty_layout", &[]),
         point_cloud_layout: BindGroupLayoutDescriptor::new(

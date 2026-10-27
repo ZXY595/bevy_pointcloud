@@ -1,13 +1,11 @@
-#import bevy_pbr::{
+import bevy_pbr::render::{
     view_transformations::position_world_to_view,
-}
-
-#import bevy_pointcloud::{
+};
+import bevy_pointcloud::assets::shaders::{
     forward_io::{ShapeInput, InstanceInput, VertexOutput},
     pointcloud_bindings::pointcloud,
     pointcloud_functions,
-}
-
+};
 
 @vertex
 fn vertex(
@@ -38,25 +36,22 @@ fn vertex(
     );
 
     // Get splat normal (fallback to default)
-    #ifdef SHAPE_NORMALS
-        let shape_normal = shape.normal;
-    #else
-        let shape_normal = pointcloud.default_normal.xyz;
-    #endif
+    @if(SHAPE_NORMALS)
+    let shape_normal = shape.normal;
+    @else
+    let shape_normal = pointcloud.default_normal.xyz;
 
     // Get point normal (fallback to default)
-    #ifdef INSTANCE_NORMALS
-        let normal = vertex.normal;
-    #else
-        let normal = pointcloud.default_normal.xyz;
-    #endif
+    @if(INSTANCE_NORMALS)
+    let normal = vertex.normal;
+    @else
+    let normal = pointcloud.default_normal.xyz;
 
     // Prepare tangent
-    #ifdef VERTEX_TANGENTS
-        let tangent = vertex.tangent.xyz;
-    #else
-        let tangent = vec3<f32>(0.0);
-    #endif
+    @if(VERTEX_TANGENTS)
+    let tangent = vertex.tangent.xyz;
+    @else
+    let tangent = vec3<f32>(0.0);
 
     // Compute vertex positions
     let pos = pointcloud_functions::compute_point_vertex_positions_normal(
@@ -73,26 +68,22 @@ fn vertex(
     out.world_position = vec4<f32>(pos.world_position, 1.0);
     out.world_normal = pos.world_normal;
 
-    #ifdef VERTEX_COLORS
-        out.color = vertex.color;
-    #endif
+    @if(VERTEX_COLORS)
+    out.color = vertex.color;
 
-    #ifdef INSTANCE_UVS_B
-        out.uv_b = vertex.uv_b;
-    #endif
+    @if(INSTANCE_UVS_B)
+    out.uv_b = vertex.uv_b;
 
-    #ifdef VERTEX_TANGENTS
-        out.world_tangent = pointcloud_functions::mesh_tangent_local_to_world(
+    @if(VERTEX_TANGENTS)
+    out.world_tangent = pointcloud_functions::mesh_tangent_local_to_world(
             world_from_local,
             vertex.tangent,
-        );
-    #endif
+    );
 
-    #ifdef INSTANCE_UVS_A
-        let vertex_uv = vertex.uv;
-    #else
-        let vertex_uv = vec2<f32>(0.0);
-    #endif
+    @if(INSTANCE_UVS_A)
+    let vertex_uv = vertex.uv;
+    @else
+    let vertex_uv = vec2<f32>(0.0);
 
     out.uv = pointcloud_functions::compute_point_uv(
         vertex_uv,
@@ -103,9 +94,8 @@ fn vertex(
         radius,
     );
 
-    #ifdef SHAPE_UVS_A
-        out.shape_uv = shape.uv;
-    #endif // SHAPE_UVS_A
+    @if(SHAPE_UVS_A)
+    out.shape_uv = shape.uv;
 
     return out;
 }

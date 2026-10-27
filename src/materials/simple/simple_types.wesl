@@ -1,6 +1,5 @@
-#define_import_path bevy_pointcloud::simple_material_types
 
-struct SimplePointCloudMaterial {
+public struct SimplePointCloudMaterial {
     base_color: vec4<f32>,
     end_color: vec4<f32>,
     gradient_direction: vec4<f32>,
@@ -21,9 +20,9 @@ struct SimplePointCloudMaterial {
     flags: u32,
 }
 
-struct ColorStop {
+public struct ColorStop {
     color: vec4<f32>,
     point: f32,
 }
 
-const SIMPLE_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT: u32            = 1u << 0u;
+public const SIMPLE_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT: u32            = 1u << 0u;

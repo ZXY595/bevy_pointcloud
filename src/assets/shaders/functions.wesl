@@ -1,21 +1,19 @@
-#define_import_path bevy_pointcloud::functions
 
-#import bevy_pbr::{
+import bevy_pbr::render::{
     mesh_view_bindings::view,
     view_transformations::{
         position_world_to_clip,
         position_world_to_view,
         position_view_to_clip,
     },
-}
-#import bevy_pointcloud::{
-    types,
+};
+import bevy_pointcloud::assets::shaders::{
+    pointcloud_types as types,
     forward_io::{ShapeInput, InstanceInput},
-}
+};
+public const F32_MAX: f32 = 3.4028234663852886e+38;
 
-const F32_MAX: f32 = 3.4028234663852886e+38;
-
-fn clamp_point_size(point_size: f32, min: f32, max: f32) -> f32 {
+public fn clamp_point_size(point_size: f32, min: f32, max: f32) -> f32 {
     let checked_max = select(max, F32_MAX, max <= 0.0);
 
     return clamp(point_size, min, checked_max);
@@ -36,7 +34,7 @@ fn clamp_point_size(point_size: f32, min: f32, max: f32) -> f32 {
 ///
 /// # Returns
 /// The adjusted World-Space size for the quad geometry.
-fn compute_screen_space_point_size(
+public fn compute_screen_space_point_size(
     view_position: vec3<f32>,
     point_size_px: f32,
     min_point_size_px: f32,
@@ -66,7 +64,7 @@ fn compute_screen_space_point_size(
 ///
 /// # Returns
 /// The adjusted World-Space size for the quad geometry.
-fn compute_world_space_point_size(
+public fn compute_world_space_point_size(
     view_position: vec3<f32>,
     point_size_world: f32,
     min_point_size_px: f32,
@@ -94,13 +92,13 @@ fn compute_world_space_point_size(
 
 
 
-fn srgb_to_rgb_simple(color: vec3<f32>) -> vec3<f32> {
+public fn srgb_to_rgb_simple(color: vec3<f32>) -> vec3<f32> {
     return pow(color, vec3<f32>(2.2));
 }
 
 // Extract an approximate uniform scale factor from a transform matrix.
 // We take the largest axis scale to keep point sizing stable under non-uniform scaling.
-fn extract_max_scale(matrix: mat4x4<f32>) -> f32 {
+public fn extract_max_scale(matrix: mat4x4<f32>) -> f32 {
     let scale_x = length(matrix[0].xyz);
     let scale_y = length(matrix[1].xyz);
     let scale_z = length(matrix[2].xyz);
@@ -109,7 +107,7 @@ fn extract_max_scale(matrix: mat4x4<f32>) -> f32 {
 }
 
 // Extract the scale performed by this matrix transform
-fn extract_scale(matrix: mat4x4<f32>) -> vec3<f32> {
+public fn extract_scale(matrix: mat4x4<f32>) -> vec3<f32> {
     let scale_x = length(matrix[0].xyz);
     let scale_y = length(matrix[1].xyz);
     let scale_z = length(matrix[2].xyz);
@@ -118,7 +116,7 @@ fn extract_scale(matrix: mat4x4<f32>) -> vec3<f32> {
 }
 
 /// WIP function to handle adaptive point sizing in octrees
-fn compute_radius(
+public fn compute_radius(
     // will be used for adaptive point size
     vertex: InstanceInput,
     // view_position: vec3<f32>,
@@ -142,7 +140,7 @@ fn compute_radius(
 /// - `point_size`: the point size is juste a scale applied to the shape
 /// Note that the scale from `world_from_local` is also applied (the max scale) to preserve coherent point sizing.
 /// The shape is always face to the camera. Later we would be using the normal of the points to orient the shapes.
-fn compute_view_billboard_vertex_position(
+public fn compute_view_billboard_vertex_position(
     view_position: vec3<f32>,
     shape_position: vec3<f32>,
     radius: f32,
@@ -160,7 +158,7 @@ fn compute_view_billboard_vertex_position(
 /// - `world_from_local`: transform matrix from local (in the point cloud space) to the world
 /// - `shape_position`: the 3D position of a vertex of the shape (e.g. vertices of a sphere)
 /// - `point_size`: the point size is just a scale applied to the shape
-fn compute_world_vertex_position_oriented(
+public fn compute_world_vertex_position_oriented(
     world_position: vec3<f32>,
     normal: vec3<f32>,
     world_from_local: mat4x4<f32>,
@@ -207,7 +205,7 @@ fn compute_world_vertex_position_oriented(
 /// - `world_from_local`: transform matrix from local (in the point cloud space) to the world
 /// - `shape_position`: the 3D position of a vertex of the shape (e.g. vertices of a sphere)
 /// - `point_size`: the point size is just a scale applied to the shape
-fn compute_world_vertex_position_oriented_with_tangent(
+public fn compute_world_vertex_position_oriented_with_tangent(
     world_position: vec3<f32>,
     normal: vec3<f32>,
     tangent: vec3<f32>,
@@ -239,7 +237,7 @@ fn compute_world_vertex_position_oriented_with_tangent(
 }
 
 
-fn compute_tangent_and_bitangent(
+public fn compute_tangent_and_bitangent(
     normal: vec3<f32>,
 ) -> mat2x3<f32> {
     // Build the remaining orthonormal basis (Tangent & Bitangent)
@@ -257,7 +255,7 @@ fn compute_tangent_and_bitangent(
 
 
 
-fn compute_world_vertex_normal_oriented_with_tangent(
+public fn compute_world_vertex_normal_oriented_with_tangent(
     normal: vec3<f32>,
     tangent: vec3<f32>,
     world_from_local: mat4x4<f32>,
@@ -279,7 +277,7 @@ fn compute_world_vertex_normal_oriented_with_tangent(
     return normalize(world_rot * local_normal);
 }
 
-fn compute_world_vertex_normal_oriented(
+public fn compute_world_vertex_normal_oriented(
     normal: vec3<f32>,
     world_from_local: mat4x4<f32>,
     shape_normal: vec3<f32>,
@@ -320,11 +318,11 @@ fn compute_world_vertex_normal_oriented(
 
 
 
-fn is_bit_set(number: u32, index: u32) -> bool {
+public fn is_bit_set(number: u32, index: u32) -> bool {
     return (number & (1u << index)) != 0u;
 }
 
-fn count_one_bits_compat(x: u32) -> u32 {
+public fn count_one_bits_compat(x: u32) -> u32 {
     var v = x;
     v = v - ((v >> 1u) & 0x55555555u);
     v = (v & 0x33333333u) + ((v >> 2u) & 0x33333333u);
@@ -332,7 +330,7 @@ fn count_one_bits_compat(x: u32) -> u32 {
 }
 
 // Count number of bits before provided index
-fn count_bits_before(mask: u32, index: u32) -> u32 {
+public fn count_bits_before(mask: u32, index: u32) -> u32 {
     // Create a mask for bits before index
     let before_mask = (1u << index) - 1u;
 

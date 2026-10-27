@@ -20,8 +20,8 @@ pub struct StandardPointCloudMaterialPlugin;
 
 impl Plugin for StandardPointCloudMaterialPlugin {
     fn build(&self, app: &mut bevy::app::App) {
-        embedded_asset!(app, "pbr.wgsl");
-        embedded_asset!(app, "pbr_prepass.wgsl");
+        embedded_asset!(app, "pbr.wesl");
+        embedded_asset!(app, "pbr_prepass.wesl");
 
         app.add_plugins(MaterialPlugin::<StandardPointCloudMaterial>::default());
     }
@@ -124,8 +124,8 @@ impl Material for StandardPointCloudMaterial {
         ShaderRef::Default
     }
     fn fragment_shader() -> ShaderRef {
-        shader_ref(bevy::asset::embedded_path!("pbr.wgsl"))
-        // "shaders/pbr_dev.wgsl".into()
+        shader_ref(bevy::asset::embedded_path!("pbr.wesl"))
+        // "shaders/pbr_dev.wesl".into()
     }
 
     fn alpha_mode(&self) -> bevy::material::prelude::AlphaMode {
@@ -149,8 +149,8 @@ impl Material for StandardPointCloudMaterial {
     }
 
     fn prepass_fragment_shader() -> ShaderRef {
-        shader_ref(bevy::asset::embedded_path!("pbr_prepass.wgsl"))
-        // "shaders/pbr_prepass_dev.wgsl".into()
+        shader_ref(bevy::asset::embedded_path!("pbr_prepass.wesl"))
+        // "shaders/pbr_prepass_dev.wesl".into()
     }
 
     fn deferred_vertex_shader() -> ShaderRef {
@@ -158,8 +158,8 @@ impl Material for StandardPointCloudMaterial {
     }
 
     fn deferred_fragment_shader() -> ShaderRef {
-        shader_ref(bevy::asset::embedded_path!("pbr.wgsl"))
-        // "shaders/pbr_dev.wgsl".into()
+        shader_ref(bevy::asset::embedded_path!("pbr.wesl"))
+        // "shaders/pbr_dev.wesl".into()
     }
 
     fn specialize(

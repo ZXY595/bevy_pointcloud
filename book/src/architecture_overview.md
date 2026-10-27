@@ -170,7 +170,7 @@ Instead of reinventing the wheel, `bevy_point_cloud` is built directly on top of
 This architectural choice ensures that:
 * **Materials are First-Class Assets:** They are managed by Bevy’s `AssetServer`, benefit from hot-reloading, and can be easily duplicated or modified at runtime.
 * **Instance Sharing & Efficiency:** A single material asset instance can be shared and reused across multiple distinct point cloud instances in your scene. This dramatically reduces bind group re-bindings and maximizes GPU rendering efficiency.
-* **Fully Extensible:** You can implement the `PointCloudMaterial` trait to provide your own custom WGSL shaders, bind groups, and uniform properties, leveraging Bevy's automatic pipeline caching under the hood.
+* **Fully Extensible:** You can implement the `PointCloudMaterial` trait to provide your own custom WESL shaders, bind groups, and uniform properties, leveraging Bevy's automatic pipeline caching under the hood.
 
 
 ### The Built-in `SimplePointCloudMaterial`

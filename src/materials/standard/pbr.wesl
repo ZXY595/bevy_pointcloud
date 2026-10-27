@@ -1,90 +1,77 @@
-#import bevy_pbr::{
+import bevy_pbr::render::{
     pbr_types,
     pbr_functions::alpha_discard,
     pbr_fragment::pbr_input_from_standard_material,
-    decal::clustered::apply_decals,
-}
-
-#import bevy_pbr::pbr_bindings
-
+};
+import bevy_pbr::decal::clustered::apply_decals;
 // ============================================================================
 // BEGIN CUSTOM PATCH: [PointCloudPlugin] - Point size and depth attenuation
 // `VertexOutput` is no more imported in each case because imported below.
 // ============================================================================
 
-#ifdef PREPASS_PIPELINE
-#import bevy_pbr::{
-    prepass_io::{VertexOutput as PbrVertexOutput, FragmentOutput},
-    pbr_deferred_functions::deferred_output,
-}
-#else
-#import bevy_pbr::{
+@if(PREPASS_PIPELINE)
+import bevy_pbr::{
+    deferred::functions::deferred_output,
+    prepass::io::{VertexOutput as PbrVertexOutput, FragmentOutput},
+};
+@else
+import bevy_pbr::render::{
     forward_io::{VertexOutput as PbrVertexOutput, FragmentOutput},
     pbr_functions::{apply_pbr_lighting, main_pass_post_lighting_processing},
     pbr_types::STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
-}
-#endif
+};
 
-#ifdef PREPASS_PIPELINE
-#import bevy_pointcloud::prepass_io::VertexOutput
-#else
-#import bevy_pointcloud::forward_io::VertexOutput
-#endif
+@if(PREPASS_PIPELINE)
+import bevy_pointcloud::render::prepass::prepass_io::VertexOutput;
+@else
+import bevy_pointcloud::assets::shaders::forward_io::VertexOutput;
 
-#import bevy_pointcloud::{
+import bevy_pointcloud::assets::shaders::{
     functions,
     pointcloud_bindings::pointcloud,
-}
-
+};
 // ============================================================================
 // END CUSTOM PATCH: [PointCloudPlugin]
 // ============================================================================
 
-#ifdef VISIBILITY_RANGE_DITHER
-#import bevy_pbr::pbr_functions::visibility_range_dither;
-#endif
+@if(VISIBILITY_RANGE_DITHER)
+import bevy_pbr::render::pbr_functions::visibility_range_dither;
 
-#ifdef MESHLET_MESH_MATERIAL_PASS
-#import bevy_pbr::meshlet_visibility_buffer_resolve::resolve_vertex_output
-#endif
+@if(MESHLET_MESH_MATERIAL_PASS)
+import bevy_pbr::meshlet::visibility_buffer_resolve::resolve_vertex_output;
 
-#ifdef OIT_ENABLED
-#import bevy_core_pipeline::oit::oit_draw
-#endif // OIT_ENABLED
+@if(OIT_ENABLED)
+import bevy_core_pipeline::oit::draw::oit_draw;
 
-#ifdef FORWARD_DECAL
-#import bevy_pbr::decal::forward::get_forward_decal_info
-#endif
+@if(FORWARD_DECAL)
+import bevy_pbr::decal::forward::get_forward_decal_info;
 
 @fragment
 fn fragment(
-#ifdef MESHLET_MESH_MATERIAL_PASS
+@if(MESHLET_MESH_MATERIAL_PASS)
     @builtin(position) frag_coord: vec4<f32>,
-#else
+@else
     vertex_output: VertexOutput,
     @builtin(front_facing) is_front: bool,
-#endif
 ) -> FragmentOutput {
-#ifdef MESHLET_MESH_MATERIAL_PASS
+@if(MESHLET_MESH_MATERIAL_PASS)
     let vertex_output = resolve_vertex_output(frag_coord);
+@if(MESHLET_MESH_MATERIAL_PASS)
     let is_front = true;
-#endif
 
 
 // ============================================================================
 // BEGIN CUSTOM PATCH: [PointCloudPlugin] - Point size and depth attenuation
 // ============================================================================
 
-#ifdef SHAPE_UVS_A
-    #ifdef SPLAT_RADIUS
-        // Perfect circle
+@if(SHAPE_UVS_A) {    @if(SPLAT_RADIUS) {        // Perfect circle
         let dist = distance(vertex_output.shape_uv, vec2<f32>(0.5, 0.5));
 
         if dist > pointcloud.radius {
             discard;
         }
-    #endif // SIMPLE_MATERIAL_SHAPE_RADIUS
-#endif // SHAPE_UVS_A
+    }
+}
 
     var in: PbrVertexOutput;
 
@@ -92,27 +79,21 @@ fn fragment(
     in.world_position              = vertex_output.world_position;
     in.world_normal                = vertex_output.world_normal;
 
-    #ifdef VERTEX_UVS_A
-        in.uv                      = vertex_output.uv;
-    #endif // VERTEX_UVS_A
-    #ifdef VERTEX_UVS_B
-        in.uv_b                    = vertex_output.uv_b;
-    #endif // VERTEX_UVS_B
-    #ifdef VERTEX_TANGENTS
-        in.world_tangent           = vertex_output.world_tangent;
-    #endif // VERTEX_TANGENTS
-    #ifdef VERTEX_COLORS
-        in.color = vec4<f32>(
+    @if(VERTEX_UVS_A)
+    in.uv = vertex_output.uv;
+    @if(VERTEX_UVS_B)
+    in.uv_b = vertex_output.uv_b;
+    @if(VERTEX_TANGENTS)
+    in.world_tangent = vertex_output.world_tangent;
+    @if(VERTEX_COLORS)
+    in.color = vec4<f32>(
             functions::srgb_to_rgb_simple(vertex_output.color.xyz),
             vertex_output.color.a,
-        );
-    #endif // VERTEX_COLORS
-    #ifdef VERTEX_OUTPUT_INSTANCE_INDEX
-        in.instance_index          = vertex_output.instance_index;
-    #endif // VERTEX_OUTPUT_INSTANCE_INDEX
-    #ifdef VISIBILITY_RANGE_DITHER
-        in.visibility_range_dither = vertex_output.visibility_range_dither;
-    #endif // VISIBILITY_RANGE_DITHER
+    );
+    @if(VERTEX_OUTPUT_INSTANCE_INDEX)
+    in.instance_index = vertex_output.instance_index;
+    @if(VISIBILITY_RANGE_DITHER)
+    in.visibility_range_dither = vertex_output.visibility_range_dither;
 
 // ============================================================================
 // END CUSTOM PATCH: [PointCloudPlugin]
@@ -120,65 +101,53 @@ fn fragment(
 
     // If we're in the crossfade section of a visibility range, conditionally
     // discard the fragment according to the visibility pattern.
-#ifdef VISIBILITY_RANGE_DITHER
+@if(VISIBILITY_RANGE_DITHER)
     visibility_range_dither(in.position, in.visibility_range_dither);
-#endif
 
-#ifdef FORWARD_DECAL
+@if(FORWARD_DECAL)
     let forward_decal_info = get_forward_decal_info(in);
+@if(FORWARD_DECAL)
     in.world_position = forward_decal_info.world_position;
+@if(FORWARD_DECAL)
     in.uv = forward_decal_info.uv;
-#endif
 
     // generate a PbrInput struct from the StandardMaterial bindings
     var pbr_input = pbr_input_from_standard_material(in, is_front);
 
     // alpha discard
-    pbr_input.material.base_color = alpha_discard(pbr_input.material, pbr_input.material.base_color);
+    pbr_input.material.base_color = alpha_discard(
+        pbr_input.material.flags,
+        pbr_input.material.alpha_cutoff,
+        pbr_input.material.base_color,
+    );
 
     // clustered decals
     apply_decals(&pbr_input);
 
-#ifdef PREPASS_PIPELINE
-    // write the gbuffer, lighting pass id, and optionally normal and motion_vector textures
+@if(PREPASS_PIPELINE)
     let out = deferred_output(in, pbr_input);
-#else
-    // in forward mode, we calculate the lit color immediately, and then apply some post-lighting effects here.
-    // in deferred mode the lit color and these effects will be calculated in the deferred lighting shader
+@if(!PREPASS_PIPELINE)
     var out: FragmentOutput;
+@if(!PREPASS_PIPELINE)
     if (pbr_input.material.flags & STANDARD_MATERIAL_FLAGS_UNLIT_BIT) == 0u {
         out.color = apply_pbr_lighting(pbr_input);
     } else {
         out.color = pbr_input.material.base_color;
     }
 
-    // apply in-shader post processing (fog, alpha-premultiply, and also tonemapping, debanding if the camera is non-hdr)
-    // note this does not include fullscreen postprocessing effects like bloom.
+@if(!PREPASS_PIPELINE)
     out.color = main_pass_post_lighting_processing(pbr_input, out.color);
-#endif
 
-#ifdef OIT_ENABLED
-    let alpha_mode = pbr_input.material.flags & pbr_types::STANDARD_MATERIAL_FLAGS_ALPHA_MODE_RESERVED_BITS;
+@if(OIT_ENABLED) {    let alpha_mode = pbr_input.material.flags & pbr_types::STANDARD_MATERIAL_FLAGS_ALPHA_MODE_RESERVED_BITS;
     if alpha_mode != pbr_types::STANDARD_MATERIAL_FLAGS_ALPHA_MODE_OPAQUE {
         // The fragments will only be drawn during the oit resolve pass.
         oit_draw(in.position, out.color);
         discard;
     }
-#endif // OIT_ENABLED
+}
 
-#ifdef FORWARD_DECAL
-        out.color.a = min(forward_decal_info.alpha, out.color.a);
-#endif
-
-    // if ((pbr_bindings::material.flags & pbr_types::STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT) != 0u) {
-    //     let texture_color = textureSample(pbr_bindings::base_color_texture, pbr_bindings::base_color_sampler, in.uv);
-    //     #ifdef VERTEX_UVS
-    //     out.color = texture_color;
-    //     #endif
-    // }
-
-    // out.color = pbr_bindings::material.base_color;
-    // out.color = vec4<f32>(in.uv.x, in.uv.y, in.uv.x, 1.0);
+@if(FORWARD_DECAL)
+    out.color.a = min(forward_decal_info.alpha, out.color.a);
 
     return out;
 }

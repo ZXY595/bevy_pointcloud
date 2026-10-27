@@ -1,6 +1,5 @@
-#define_import_path bevy_pointcloud::pointcloud_types
 
-struct PointCloud {
+public struct PointCloud {
     aabb_min: vec4<f32>,
     aabb_max: vec4<f32>,
     model_center: vec4<f32>,
@@ -40,13 +39,13 @@ struct PointCloud {
     uv_transform_b: vec4<f32>,
 };
 
-struct PointVertexPositions {
+public struct PointVertexPositions {
     world_position: vec3<f32>,
     view_position: vec3<f32>,
     clip_position: vec4<f32>,
 };
 
-struct PointVertexPositionsNormal {
+public struct PointVertexPositionsNormal {
     world_position: vec3<f32>,
     view_position: vec3<f32>,
     clip_position: vec4<f32>,
