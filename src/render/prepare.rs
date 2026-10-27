@@ -62,9 +62,9 @@ pub fn prepare_point_cloud_uniforms(
             continue;
         };
 
-        let point_cloud_material = mesh_material_ids.point_cloud_material(*main_entity);
-        let material_bindings_index = render_material_bindings
-            .get(&point_cloud_material)
+        let material_bindings_index = mesh_material_ids
+            .point_cloud_material(*main_entity)
+            .and_then(|material| render_material_bindings.get(&material))
             .copied()
             .unwrap_or_default();
 
@@ -85,6 +85,9 @@ pub fn prepare_point_cloud_uniforms(
             None,
             None,
             None,
+            mesh_allocator
+                .mesh_metadata_slice(&mesh_asset_id)
+                .map(|mesh_metadata_slice| mesh_metadata_slice.range.start),
         );
 
         let point_cloud_uniform = PointCloudUniform::new(

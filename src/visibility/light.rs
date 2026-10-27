@@ -26,10 +26,10 @@ use crate::{
     visibility::{
         budget::PointCloudPointBudget, heap_guard::HeapGuard, stack::StackedPointCloudNodeEntity,
     },
-    CameraView, GlobalVisiblePointCloudChunks, GlobalVisiblePointCloudNodes, PointCloud,
-    PointCloud3d, PointCloudChunk3d, PointCloudInstances, PointCloudLoadTasks, PointCloudTopology,
-    PointCloudVisibilitySettings, ScreenPixelRadiusFilter, SkipPointCloudVisibility,
-    VisiblePointCloudFlatEntities, VisiblePointCloudOctreeEntities,
+    CameraView, GlobalVisiblePointCloudChunks, PointCloud, PointCloud3d, PointCloudChunk3d,
+    PointCloudInstances, PointCloudLoadTasks, PointCloudTopology, PointCloudVisibilitySettings,
+    ScreenPixelRadiusFilter, SkipPointCloudVisibility, VisiblePointCloudFlatEntities,
+    VisiblePointCloudOctreeEntities,
 };
 
 #[derive(Component, Clone, Debug, Default, Reflect)]
@@ -91,7 +91,6 @@ pub fn check_point_cloud_nodes_dir_lights_visibility(
     point_clouds: Res<Assets<PointCloud>>,
     mut point_cloud_load_tasks: ResMut<PointCloudLoadTasks>,
     mut priority_stack: Local<BinaryHeap<StackedPointCloudNodeEntity>>,
-    mut global_visible_point_cloud_nodes: ResMut<GlobalVisiblePointCloudNodes>,
     mut global_visible_point_cloud_chunks: ResMut<GlobalVisiblePointCloudChunks>,
     point_cloud_instances: Res<PointCloudInstances>,
     shadow_map_config: Res<DirectionalLightShadowMap>,

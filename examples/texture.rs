@@ -7,7 +7,6 @@ use bevy::{
     color::palettes::css::GREEN,
     dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin, FrameTimeGraphConfig},
     image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
-    light::CascadeShadowConfigBuilder,
     math::Affine2,
     prelude::*,
     render::render_resource::Face,

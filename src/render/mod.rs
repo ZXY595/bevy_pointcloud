@@ -22,10 +22,7 @@ use bevy::{
         schedule::{IntoScheduleConfigs, SystemSet},
         world::{FromWorld, World},
     },
-    math::{
-        primitives::{Rectangle, Triangle3d},
-        Vec3,
-    },
+    math::Vec3,
     mesh::Mesh,
     pbr::{extract_lights, ExtractedDirectionalLight, MeshPipelineSystems},
     render::{
@@ -37,6 +34,7 @@ use bevy::{
         view::ExtractedView,
         ExtractSchedule, GpuResourceAppExt, Render, RenderApp, RenderStartup, RenderSystems,
     },
+    shape::{Rectangle, Triangle3d},
 };
 pub use camera::*;
 pub use components::*;
@@ -186,7 +184,7 @@ impl FromWorld for SplatMeshes {
     }
 }
 
-impl ExtractResource for SplatMeshes {
+impl ExtractResource<RenderApp> for SplatMeshes {
     type Source = Self;
 
     fn extract_resource(source: &Self::Source) -> Self {

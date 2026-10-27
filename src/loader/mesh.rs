@@ -1,4 +1,4 @@
-use bevy::{camera::primitives::MeshAabb, mesh::Mesh, reflect::TypePath};
+use bevy::{mesh::Mesh, reflect::TypePath};
 use thiserror::Error;
 
 use crate::{
@@ -42,7 +42,7 @@ impl OctreeLoader for PointCloudMeshLoader {
         builder: &mut OctreeHierarchyBuilder<Self::Hierarchy>,
     ) -> Result<(), Self::Error> {
         let point_count = self.mesh.count_vertices();
-        let aabb = self.mesh.compute_aabb();
+        let aabb = bevy::camera::primitives::MeshAabb::get_aabb(&self.mesh);
 
         builder.insert_root(
             InsertNodeParams {

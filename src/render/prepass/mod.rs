@@ -36,7 +36,7 @@ use bevy::{
             },
             *,
         },
-        renderer::{RenderAdapter, RenderAdapterInfo, RenderDevice, RenderQueue, WgpuWrapper},
+        renderer::{RenderAdapter, RenderAdapterInfo, RenderDevice, RenderQueue},
         sync_world::RenderEntity,
         view::{
             ExtractedView, Msaa, RenderVisibilityRanges, RenderVisibleEntities, RetainedViewEntity,
@@ -323,7 +323,7 @@ pub(crate) fn binding_arrays_are_usable(
     render_device: &RenderDevice,
     render_adapter: &RenderAdapter,
 ) -> bool {
-    let adapter_info = RenderAdapterInfo(WgpuWrapper::new(render_adapter.get_info()));
+    let adapter_info = RenderAdapterInfo::new(render_adapter.get_info());
 
     !cfg!(feature = "shader_format_glsl")
         && bevy::render::get_adreno_model(&adapter_info).is_none_or(|model| model > 610)
@@ -878,6 +878,7 @@ pub fn prepare_previous_view_uniforms(
                 PreviousViewData {
                     view_from_world,
                     clip_from_world: camera.clip_from_view * view_from_world,
+                    unjittered_clip_from_world: camera.clip_from_view * view_from_world,
                     clip_from_view: camera.clip_from_view,
                     world_from_clip: Mat4::from(world_from_view) * view_from_clip,
                     view_from_clip,

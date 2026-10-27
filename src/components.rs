@@ -12,7 +12,7 @@ use bevy::{
     mesh::Mesh,
     prelude::{Deref, DerefMut},
     reflect::{std_traits::ReflectDefault, Reflect, ReflectDeserialize, ReflectSerialize},
-    render::{extract_component::ExtractComponent, sync_component::SyncComponent},
+    render::{extract_component::ExtractComponent, sync_component::SyncComponent, RenderApp},
     transform::components::Transform,
 };
 use derive_more::derive::From;
@@ -36,11 +36,11 @@ impl AsAssetId for PointCloud3d {
     }
 }
 
-impl SyncComponent for PointCloud3d {
+impl SyncComponent<RenderApp> for PointCloud3d {
     type Target = Self;
 }
 
-impl ExtractComponent for PointCloud3d {
+impl ExtractComponent<RenderApp> for PointCloud3d {
     type QueryData = &'static PointCloud3d;
     type QueryFilter = ();
     type Out = Self;
@@ -76,11 +76,11 @@ impl AsAssetId for PointCloudChunk3d {
     }
 }
 
-impl SyncComponent for PointCloudChunk3d {
+impl SyncComponent<RenderApp> for PointCloudChunk3d {
     type Target = Self;
 }
 
-impl ExtractComponent for PointCloudChunk3d {
+impl ExtractComponent<RenderApp> for PointCloudChunk3d {
     type QueryData = &'static PointCloudChunk3d;
     type QueryFilter = ();
     type Out = Self;
@@ -203,11 +203,11 @@ impl Default for SplatSettings {
     }
 }
 
-impl SyncComponent for SplatSettings {
+impl SyncComponent<RenderApp> for SplatSettings {
     type Target = Self;
 }
 
-impl ExtractComponent for SplatSettings {
+impl ExtractComponent<RenderApp> for SplatSettings {
     type QueryData = &'static SplatSettings;
     type QueryFilter = ();
     type Out = Self;
@@ -256,12 +256,14 @@ pub struct ChildrenChunks(Vec<Entity>);
 /// # Example
 ///
 /// ```
-/// # use bevy_pbr::{Material, MeshMaterial3d, StandardMaterial};
-/// # use bevy_ecs::prelude::*;
-/// # use bevy_mesh::{Mesh, Mesh3d};
-/// # use bevy_color::palettes::basic::RED;
-/// # use bevy_asset::Assets;
-/// # use bevy_math::primitives::Capsule3d;
+/// # use bevy::{
+/// #     asset::Assets,
+/// #     color::palettes::basic::RED,
+/// #     ecs::prelude::*,
+/// #     mesh::{Mesh, Mesh3d},
+/// #     pbr::{MeshMaterial3d, StandardMaterial},
+/// #     shape::Capsule3d,
+/// # };
 /// #
 /// // Spawn an entity with a mesh using `StandardMaterial`.
 /// fn setup(

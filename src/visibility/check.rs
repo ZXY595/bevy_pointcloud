@@ -11,6 +11,8 @@ use crate::{
     SkipPointCloudVisibility, VisiblePointCloudFlatEntities, VisiblePointCloudNodeEntity,
     VisiblePointCloudOctreeEntities,
 };
+#[cfg(feature = "trace")]
+use bevy::log::info_span;
 use bevy::{
     asset::Assets,
     camera::{

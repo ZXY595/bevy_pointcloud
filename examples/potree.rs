@@ -1,7 +1,7 @@
 #![expect(missing_docs, reason = "Not all docs are written yet.")]
 mod ui;
 
-use std::{f32::consts::PI, ops::Neg};
+use std::f32::consts::PI;
 
 use bevy::{
     camera::primitives::Aabb,
@@ -239,7 +239,7 @@ fn update_day_cycle(
             let sunset_color = Color::linear_rgb(1.0, 0.4, 0.2);
             let noon_color = Color::linear_rgb(1.0, 1.0, 0.9);
 
-            // Bevy 0.19 prefers linear color space blending
+            // Bevy 0.20 prefers linear color space blending
             light.color = Color::from(sunset_color.to_linear().lerp(noon_color.to_linear(), t));
         } else {
             // Nighttime setup (Moonlight or faint dark blue tint)

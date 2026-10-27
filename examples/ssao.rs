@@ -6,11 +6,7 @@ use bevy::{
     camera::primitives::Aabb,
     camera_controller::free_camera::{FreeCamera, FreeCameraPlugin},
     color::palettes::css::{GREEN, RED},
-    core_pipeline::prepass::{DepthPrepass, NormalPrepass},
-    dev_tools::{
-        fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin, FrameTimeGraphConfig},
-        render_debug::{RenderDebugMode, RenderDebugOverlay, RenderDebugOverlayPlugin},
-    },
+    dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin, FrameTimeGraphConfig},
     light::CascadeShadowConfigBuilder,
     pbr::ScreenSpaceAmbientOcclusion,
     platform::collections::HashSet,
@@ -75,6 +71,7 @@ fn setup(mut commands: Commands) {
         // NormalPrepass,
         ScreenSpaceAmbientOcclusion {
             quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::High,
+            radius: 1000.0,
             constant_object_thickness: 1000.0,
         },
         // RenderDebugOverlay {
@@ -134,7 +131,7 @@ fn load_sphere_point_cloud(
             ..default()
         }));
 
-    let pc_material_handle = pc_simple_materials.add(SimplePointCloudMaterial {
+    let _pc_material_handle = pc_simple_materials.add(SimplePointCloudMaterial {
         base_color: RED.into(),
         cull_mode: None,
         // perceptual_roughness: 0.8,

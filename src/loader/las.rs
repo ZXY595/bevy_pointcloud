@@ -3,7 +3,7 @@ use std::io::Cursor;
 use bevy::{
     app::{App, Plugin},
     asset::{AssetApp, AssetLoader, RenderAssetUsages},
-    camera::primitives::{Aabb, MeshAabb},
+    camera::primitives::Aabb,
     log::warn,
     math::Vec3,
     mesh::{Mesh, VertexAttributeValues},
@@ -188,7 +188,7 @@ impl AssetLoader for LasAssetLoader {
         let mesh = load_points_as_mesh(point_count, &mut las_reader)?;
         let vertex_buffer_size = mesh.get_vertex_buffer_size();
 
-        let aabb = mesh.compute_aabb();
+        let aabb = bevy::camera::primitives::MeshAabb::get_aabb(&mesh);
 
         let mesh_handle = load_context.add_labeled_asset("mesh", mesh);
 

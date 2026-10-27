@@ -5,7 +5,7 @@ use std::f32::consts::PI;
 use bevy::{
     camera::primitives::Aabb,
     camera_controller::free_camera::{FreeCamera, FreeCameraPlugin},
-    color::palettes::css::{GREEN, RED},
+    color::palettes::css::GREEN,
     core_pipeline::tonemapping::Tonemapping,
     dev_tools::fps_overlay::{FpsOverlayConfig, FpsOverlayPlugin, FrameTimeGraphConfig},
     image::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
@@ -298,7 +298,7 @@ fn update_day_cycle(
             let sunset_color = Color::linear_rgb(1.0, 0.4, 0.2);
             let noon_color = Color::linear_rgb(1.0, 1.0, 0.9);
 
-            // Bevy 0.19 prefers linear color space blending
+            // Bevy 0.20 prefers linear color space blending
             light.color = Color::from(sunset_color.to_linear().lerp(noon_color.to_linear(), t));
         } else {
             // Nighttime setup (Moonlight or faint dark blue tint)

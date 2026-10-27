@@ -311,7 +311,7 @@ impl SpecializedPointCloudPipeline for PointCloudPipeline {
             // the current fragment value in the output and the depth is written to the
             // depth buffer
             depth_write_enabled = true;
-            is_opaque = !key.contains(MeshPipelineKey::READS_VIEW_TRANSMISSION_TEXTURE);
+            is_opaque = !key.contains(MeshPipelineKey::VIEW_TRANSMISSION_TEXTURE);
             alpha_to_coverage_enabled = true;
             shader_defs.push("ALPHA_TO_COVERAGE".into());
         } else {
@@ -323,7 +323,7 @@ impl SpecializedPointCloudPipeline for PointCloudPipeline {
             // the current fragment value in the output and the depth is written to the
             // depth buffer
             depth_write_enabled = true;
-            is_opaque = !key.contains(MeshPipelineKey::READS_VIEW_TRANSMISSION_TEXTURE);
+            is_opaque = !key.contains(MeshPipelineKey::VIEW_TRANSMISSION_TEXTURE);
         }
 
         if key.contains(MeshPipelineKey::NORMAL_PREPASS) {
@@ -382,8 +382,8 @@ impl SpecializedPointCloudPipeline for PointCloudPipeline {
 
             let method = key.intersection(MeshPipelineKey::TONEMAP_METHOD_RESERVED_BITS);
 
-            if method == MeshPipelineKey::TONEMAP_METHOD_NONE {
-                shader_defs.push("TONEMAP_METHOD_NONE".into());
+            if method == MeshPipelineKey::TONEMAP_METHOD_LINEAR {
+                shader_defs.push("TONEMAP_METHOD_LINEAR".into());
             } else if method == MeshPipelineKey::TONEMAP_METHOD_REINHARD {
                 shader_defs.push("TONEMAP_METHOD_REINHARD".into());
             } else if method == MeshPipelineKey::TONEMAP_METHOD_REINHARD_LUMINANCE {

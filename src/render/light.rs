@@ -601,6 +601,7 @@ fn get_shadow_map_visible_entities<'w, 's: 'w>(
                 .expect("Failed to get directional light visible entities")
                 .subviews
                 .get(&retained_view_entity)
+                .map(|(_, entities)| entities)
                 .expect("Failed to get directional light visible entities for cascade")
         }
         LightEntity::Point {
@@ -612,7 +613,7 @@ fn get_shadow_map_visible_entities<'w, 's: 'w>(
             // currently share the same set of visible entities.
             let retained_view_entity = RetainedViewEntity {
                 main_entity: extracted_view_light.retained_view_entity.main_entity,
-                auxiliary_entity: MainEntity::from(Entity::PLACEHOLDER),
+                auxiliary_entity: Some(MainEntity::from(Entity::PLACEHOLDER)),
                 subview_index: *face_index as u32,
             };
             shadow_map_visible_entities_query
@@ -620,6 +621,7 @@ fn get_shadow_map_visible_entities<'w, 's: 'w>(
                 .expect("Failed to get point light visible entities")
                 .subviews
                 .get(&retained_view_entity)
+                .map(|(_, entities)| entities)
                 .expect("Failed to get point light visible entity for face")
         }
         LightEntity::Spot { light_entity } => {
@@ -628,7 +630,7 @@ fn get_shadow_map_visible_entities<'w, 's: 'w>(
             // currently share the same set of visible entities.
             let retained_view_entity = RetainedViewEntity {
                 main_entity: extracted_view_light.retained_view_entity.main_entity,
-                auxiliary_entity: MainEntity::from(Entity::PLACEHOLDER),
+                auxiliary_entity: Some(MainEntity::from(Entity::PLACEHOLDER)),
                 subview_index: 0,
             };
             shadow_map_visible_entities_query
@@ -636,6 +638,7 @@ fn get_shadow_map_visible_entities<'w, 's: 'w>(
                 .expect("Failed to get spot light visible entities")
                 .subviews
                 .get(&retained_view_entity)
+                .map(|(_, entities)| entities)
                 .expect("Failed to get spot light visible entity for view")
         }
     }

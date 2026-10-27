@@ -6,7 +6,7 @@ use bevy::{
     asset::RenderAssetUsages,
     camera::primitives::Aabb,
     log::warn,
-    math::DVec3,
+    math::{DVec3, Vec3},
     mesh::{Mesh, VertexAttributeValues},
     platform::collections::HashSet,
     prelude::Deref,
@@ -351,7 +351,10 @@ fn build_hierarchy<S: ByteSource + Send + Sync + 'static>(
         }
 
         let node = std::mem::take(&mut raw_nodes[idx]);
-        let aabb = Aabb::from_min_max(node.bounding_box.min, node.bounding_box.max);
+        let aabb = Aabb::from_min_max(
+            Vec3::from_array(node.bounding_box.min.to_array()),
+            Vec3::from_array(node.bounding_box.max.to_array()),
+        );
         let node_id = if let Some(parent_id) = parent_id {
             builder.insert_child(
                 parent_id,
